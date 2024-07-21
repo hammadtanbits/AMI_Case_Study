@@ -24,25 +24,27 @@ defmodule ExAssignment.Todos do
 
   """
   def list_todos(type \\ nil) do
-    cond do
-      type == :open ->
-        from(t in Todo, where: not t.done, order_by: t.priority)
-        |> Repo.all()
-
-      type == :done ->
-        from(t in Todo, where: t.done, order_by: t.priority)
-        |> Repo.all()
-
-      true ->
-        from(t in Todo, order_by: t.priority)
-        |> Repo.all()
+    query = case type do
+      :open -> from(t in Todo, where: not t.done)
+      :done -> from(t in Todo, where: t.done)
+      _ ->  Todo
     end
+
+    from(t in query, order_by: t.priority)
+    |> Repo.all()
   end
 
   @doc """
   Returns the next todo that is recommended to be done by the system.
 
-  ASSIGNMENT: ...
+  ## Examples
+      it always return not done todo.
+      iex> get_recommended()
+      %Todo{done: false}
+
+      iex> get_recommended()
+      nil
+
   """
   def get_recommended() do
     from(t in Todo, where: not t.done, order_by: t.priority, limit: 1)
