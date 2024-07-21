@@ -45,11 +45,8 @@ defmodule ExAssignment.Todos do
   ASSIGNMENT: ...
   """
   def get_recommended() do
-    list_todos(:open)
-    |> case do
-      [] -> nil
-      todos -> Enum.take_random(todos, 1) |> List.first()
-    end
+    from(t in Todo, where: not t.done, order_by: t.priority, limit: 1)
+    |> Repo.one()
   end
 
   @doc """
