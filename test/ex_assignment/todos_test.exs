@@ -59,5 +59,21 @@ defmodule ExAssignment.TodosTest do
       todo = todo_fixture()
       assert %Ecto.Changeset{} = Todos.change_todo(todo)
     end
+
+    test "get_recommended/0 returns persisted todo" do
+      for _ <- 1..3 do
+        todo_fixture()
+      end
+
+      ExAssignment.Cache.insert() #cache recommended todo
+
+      current_recommended_todo = Todos.get_recommended()
+
+      #complete a different todo
+      todo = todo_fixture()
+      Todos.check("#{todo.id}")
+
+      assert Todos.get_recommended() == current_recommended_todo
+    end
   end
 end
