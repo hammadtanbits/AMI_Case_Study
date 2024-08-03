@@ -191,6 +191,10 @@ defmodule ExAssignment.Todos do
       from(t in Todo, where: t.id == ^id, update: [set: [done: false]])
       |> Repo.update_all([])
 
+    if length(list_todos(:open)) == 1 do
+      ExAssignment.Cache.insert()
+    end
+    
     :ok
   end
 end
