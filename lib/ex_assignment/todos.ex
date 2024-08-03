@@ -39,6 +39,27 @@ defmodule ExAssignment.Todos do
     end
   end
 
+  def sum_of_priorities(todos) do
+    todos = Enum.reverse todos
+    value2 = todos |> Enum.reduce(0, fn %{priority: priority}, sum -> priority + sum end) 
+    value = Enum.take_random(1..value2, 1) |> List.first() |> IO.inspect(label: "*********random value*****")
+    choose_todo(todos, value, value2)
+  end
+
+  defp choose_todo([%{title: title}], _, _) do
+    title
+  end
+
+  defp choose_todo([%{title: title, priority: _priority} | t], rand_value, acc) do
+    acc = acc - rand_value
+
+    if rand_value <= acc  do
+      title
+    else
+      choose_todo(t, rand_value, acc)
+    end
+  end
+
   @doc """
   Returns the next todo that is recommended to be done by the system.
 
